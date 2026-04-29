@@ -5,7 +5,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $Email      = $_POST["user"]["email"];
     $contrasenia = password_hash($_POST["user"]["password"], PASSWORD_BCRYPT);
 
-    $conexion = new mysqli("localhost", "root", "", "clase");
+    $conexion = new mysqli(
+    getenv('MYSQLHOST'),
+    getenv('MYSQLUSER'),
+    getenv('MYSQLPASSWORD'),
+    getenv('MYSQL_DATABASE'),
+    (int)getenv('MYSQLPORT')
+);
     if ($conexion->connect_error) {
         die("Error de conexión: " . $conexion->connect_error);
     }

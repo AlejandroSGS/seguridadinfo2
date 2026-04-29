@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(dotnet run *)",
-      "Bash(powershell *)"
+      "Bash(powershell *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)"
     ]
   }
 }
