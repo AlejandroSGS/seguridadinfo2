@@ -6,12 +6,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $contrasenia = password_hash($_POST["user"]["password"], PASSWORD_BCRYPT);
 
     $conexion = new mysqli(
-    getenv('MYSQLHOST'),
-    getenv('MYSQLUSER'),
-    getenv('MYSQLPASSWORD'),
-    getenv('MYSQL_DATABASE'),
-    (int)getenv('MYSQLPORT')
-);
+        getenv('MYSQLHOST'),
+        getenv('MYSQLUSER'),
+        getenv('MYSQLPASSWORD'),
+        getenv('MYSQL_DATABASE'),
+        (int)getenv('MYSQLPORT')
+    );
     if ($conexion->connect_error) {
         die("Error de conexión: " . $conexion->connect_error);
     }
@@ -246,7 +246,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
 
 <div class="card">
-  <!-- Google SVG logo -->
   <svg class="google-logo" viewBox="0 0 272 92" xmlns="http://www.w3.org/2000/svg">
     <path d="M115.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18C71.25 34.32 81.24 25 93.5 25s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44S80.99 39.2 80.99 47.18c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z" fill="#EA4335"/>
     <path d="M163.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18c0-12.85 9.99-22.18 22.25-22.18s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44s-12.51 5.46-12.51 13.44c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z" fill="#FBBC05"/>
@@ -309,7 +308,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <div class="card-actions">
       <a href="index.php" class="btn-signin">Iniciar sesión en su lugar</a>
-      <button type="submit" class="btn-next">Siguiente</button>
+      <button type="submit" class="btn-next" onclick="return validar()">Siguiente</button>
     </div>
   </form>
 </div>
@@ -323,6 +322,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <a href="#">Privacidad</a>
   <a href="#">Condiciones</a>
 </div>
+
+<script>
+function validar() {
+  const pass = document.getElementById('password').value;
+  const confirm = document.getElementById('password-confirm').value;
+  if (pass !== confirm) {
+    alert('Las contraseñas no coinciden');
+    return false;
+  }
+  return true;
+}
+</script>
 
 </body>
 </html>
