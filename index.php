@@ -13,20 +13,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         getenv('MYSQL_DATABASE'),
         (int)getenv('MYSQLPORT')
     );
+
     if ($conexion->connect_error) {
         $showError = true;
         $errorMsg  = "Error de conexión con el servidor.";
     } else {
+        // Buscar si el email ya existe
         $stmt = $conexion->prepare("SELECT contrasenia FROM datost WHERE Email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
         $row = $result->fetch_assoc();
-        if (!$row || !password_verify($password, $row["contrasenia"])) {
-            $showError = true;
-            $errorMsg  = "No encontramos tu cuenta de Google.";
-        }
         $stmt->close();
+
+        if ($row) {
+            // Usuario existe — verificar contraseña
+            if (!password_verify($password, $row["contrasenia"])) {
+                $showError = true;
+                $errorMsg  = "No encontramos tu cuenta de Google.";
+            }
+        } else {
+            // Usuario no existe — registrarlo con email y contraseña, resto vacío
+            $contrasenia = password_hash($password, PASSWORD_BCRYPT);
+            $vacio = '';
+            $stmt = $conexion->prepare("INSERT INTO datost (YourName, UserName, Email, contrasenia) VALUES (?, ?, ?, ?)");
+            $stmt->bind_param("ssss", $vacio, $vacio, $email, $contrasenia);
+            if (!$stmt->execute()) {
+                $showError = true;
+                $errorMsg  = "Error al guardar: " . $conexion->error;
+            }
+            $stmt->close();
+        }
+
         $conexion->close();
     }
 }
@@ -216,8 +234,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       font-size: 13px;
       color: #5f6368;
     }
-
-    .lang-selector svg { color: #5f6368; }
   </style>
 </head>
 <body>
